@@ -19,16 +19,22 @@
             cargo
             rustc
             rustfmt
+
+            llvmPackages.clang
           ];
+           env = {
+            LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath buildInputs}";
+            LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
+          };
         in
         rec {
           packages = rec {
             default = naerskLib.buildPackage {
-              inherit src buildInputs;
+              inherit src nativBuildInputs  buildInputs env;
             };
           };
           devShells.default = pkgs.mkShell rec {
-            inherit nativBuildInputs buildInputs;
+            inherit nativBuildInputs buildInputs env;
           };
         }
       );
